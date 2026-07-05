@@ -7,6 +7,7 @@ React web app to control WiZ (Philips/Signify) smart bulbs over the local networ
 ## Features
 
 - "Discover bulbs" scans the local network and lists every WiZ bulb found
+- Preset bar: one-click relaxing color combinations (Soft Pastels, Blues, Blue & Red Mix) applied to every bulb at once
 - Per-bulb card: on/off toggle, brightness, RGB color, white color temperature, and scene selection
 - Rename a bulb (persisted by the backend)
 - Bulb state polls every 5s so changes made from the official WiZ app are reflected here too
@@ -56,7 +57,7 @@ src/
   App.tsx               # main screen: discover button + bulb grid
   main.tsx              # React entry point
   api.ts                # fetch wrappers for the backend API
-  types.ts              # shared types (Bulb, PilotState, Scene)
+  types.ts              # shared types (Bulb, PilotState, Scene, Preset)
   components/
     BulbCard.tsx        # single bulb: on/off, brightness, color/white/scenes tabs
 ```
