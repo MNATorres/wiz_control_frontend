@@ -22,3 +22,16 @@ export interface Scene {
   id: number;
   name: string;
 }
+
+export interface PresetColor {
+  r: number;
+  g: number;
+  b: number;
+  dimming: number;
+}
+
+export interface Preset {
+  key: string;
+  name: string;
+  colors: PresetColor[];
+}

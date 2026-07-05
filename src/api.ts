@@ -1,4 +1,4 @@
-import type { Bulb, PilotState, Scene } from "./types";
+import type { Bulb, PilotState, Preset, Scene } from "./types";
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -51,6 +51,14 @@ export function setColorTemp(mac: string, temp: number): Promise<unknown> {
 
 export function setScene(mac: string, sceneId: number, speed?: number): Promise<unknown> {
   return postJson(`/api/bulbs/${mac}/scene`, { sceneId, speed });
+}
+
+export function getPresets(): Promise<Preset[]> {
+  return fetch("/api/presets").then((r) => json<Preset[]>(r));
+}
+
+export function applyPreset(key: string): Promise<unknown> {
+  return postJson(`/api/presets/${key}/apply`, {});
 }
 
 export function renameBulb(mac: string, name: string): Promise<Bulb> {

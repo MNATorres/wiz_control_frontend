@@ -20,3 +20,38 @@ main {
   flex-wrap: wrap;
   gap: 16px;
 }
+
+.preset-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.preset-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.preset-swatches {
+  display: flex;
+}
+
+.preset-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-left: -6px;
+  border: 1px solid var(--bg);
+}
+
+.preset-swatch:first-child {
+  margin-left: 0;
+}

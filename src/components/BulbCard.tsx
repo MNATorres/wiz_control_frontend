@@ -27,9 +27,10 @@ interface BulbCardProps {
   bulb: Bulb;
   scenes: Scene[];
   onRenamed: (bulb: Bulb) => void;
+  refreshSignal: number;
 }
 
-export function BulbCard({ bulb, scenes, onRenamed }: BulbCardProps) {
+export function BulbCard({ bulb, scenes, onRenamed, refreshSignal }: BulbCardProps) {
   const [pilot, setPilot] = useState<PilotState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("color");
@@ -50,7 +51,7 @@ export function BulbCard({ bulb, scenes, onRenamed }: BulbCardProps) {
     const interval = setInterval(refreshPilot, 5000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bulb.mac]);
+  }, [bulb.mac, refreshSignal]);
 
   const debouncedDimming = useDebounced((value: number) => {
     api.setDimming(bulb.mac, value).catch((err: Error) => setError(err.message));
