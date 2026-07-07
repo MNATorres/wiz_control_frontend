@@ -97,7 +97,12 @@ export function BulbCard({ bulb, scenes, onRenamed, refreshSignal }: BulbCardPro
           onChange={(e) => setName(e.target.value)}
           onBlur={commitName}
         />
-        <input type="checkbox" checked={pilot?.state ?? false} onChange={toggle} />
+        <label className="switch">
+          <input type="checkbox" checked={pilot?.state ?? false} onChange={toggle} />
+          <span className="switch-track">
+            <span className="switch-thumb" />
+          </span>
+        </label>
       </div>
 
       {error && <div className="bulb-error">{error}</div>}
