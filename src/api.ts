@@ -68,3 +68,11 @@ export function renameBulb(mac: string, name: string): Promise<Bulb> {
     body: JSON.stringify({ name }),
   }).then((r) => json<Bulb>(r));
 }
+
+export async function forgetBulb(mac: string): Promise<void> {
+  const res = await fetch(`/api/bulbs/${mac}`, { method: "DELETE" });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `HTTP ${res.status}`);
+  }
+}

@@ -64,6 +64,10 @@ function App() {
     setBulbs((current) => current.map((b) => (b.mac === updated.mac ? updated : b)));
   };
 
+  const handleForgotten = (mac: string) => {
+    setBulbs((current) => current.filter((b) => b.mac !== mac));
+  };
+
   return (
     <main>
       <header className="app-header">
@@ -123,6 +127,7 @@ function App() {
             bulb={bulb}
             scenes={scenes}
             onRenamed={handleRenamed}
+            onForgotten={handleForgotten}
             refreshSignal={refreshSignal}
           />
         ))}

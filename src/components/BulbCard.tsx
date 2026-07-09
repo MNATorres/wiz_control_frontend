@@ -23,14 +23,18 @@ function useDebounced<Args extends unknown[]>(fn: (...args: Args) => void, delay
   };
 }
 
+const POLL_INTERVAL_MS = 5000;
+const MAX_BACKOFF_MS = 60000;
+
 interface BulbCardProps {
   bulb: Bulb;
   scenes: Scene[];
   onRenamed: (bulb: Bulb) => void;
+  onForgotten: (mac: string) => void;
   refreshSignal: number;
 }
 
-export function BulbCard({ bulb, scenes, onRenamed, refreshSignal }: BulbCardProps) {
+export function BulbCard({ bulb, scenes, onRenamed, onForgotten, refreshSignal }: BulbCardProps) {
   const [pilot, setPilot] = useState<PilotState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("color");
@@ -47,9 +51,36 @@ export function BulbCard({ bulb, scenes, onRenamed, refreshSignal }: BulbCardPro
   };
 
   useEffect(() => {
-    refreshPilot();
-    const interval = setInterval(refreshPilot, 5000);
-    return () => clearInterval(interval);
+    let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout>;
+    let consecutiveFailures = 0;
+
+    const poll = () => {
+      api
+        .getPilot(bulb.mac)
+        .then((result) => {
+          if (cancelled) return;
+          setPilot(result);
+          setError(null);
+          consecutiveFailures = 0;
+        })
+        .catch((err: Error) => {
+          if (cancelled) return;
+          setError(err.message);
+          consecutiveFailures += 1;
+        })
+        .finally(() => {
+          if (cancelled) return;
+          const delay = Math.min(POLL_INTERVAL_MS * 2 ** consecutiveFailures, MAX_BACKOFF_MS);
+          timeoutId = setTimeout(poll, delay);
+        });
+    };
+
+    poll();
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bulb.mac, refreshSignal]);
 
@@ -87,6 +118,10 @@ export function BulbCard({ bulb, scenes, onRenamed, refreshSignal }: BulbCardPro
     api.renameBulb(bulb.mac, name).then(onRenamed).catch((err: Error) => setError(err.message));
   };
 
+  const forget = () => {
+    api.forgetBulb(bulb.mac).then(() => onForgotten(bulb.mac)).catch((err: Error) => setError(err.message));
+  };
+
   return (
     <div className={`bulb-card${pilot ? "" : " offline"}`}>
       <div className="bulb-card-header">
@@ -105,7 +140,16 @@ export function BulbCard({ bulb, scenes, onRenamed, refreshSignal }: BulbCardPro
         </label>
       </div>
 
-      {error && <div className="bulb-error">{error}</div>}
+      {error && (
+        <div className="bulb-error">
+          {error}
+          {!pilot && (
+            <button className="bulb-forget" onClick={forget}>
+              Forget bulb
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="bulb-field">
         <label>Brightness</label>

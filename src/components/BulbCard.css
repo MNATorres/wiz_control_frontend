@@ -57,6 +57,22 @@
   border-radius: var(--radius-sm);
   padding: 6px 10px;
   font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bulb-forget {
+  border: none;
+  background: transparent;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
 }
 
 .bulb-field {
