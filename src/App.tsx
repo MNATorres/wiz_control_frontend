@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import * as api from "./api";
-import type { Bulb, Preset, Scene } from "./types";
+import type { AnimatedTheme, Bulb, Preset, Scene } from "./types";
 import { BulbCard } from "./components/BulbCard";
 import "./App.css";
+
+type View = "bulbs" | "animated";
 
 function BulbIcon({ className }: { className?: string }) {
   return (
@@ -24,11 +26,15 @@ function BulbIcon({ className }: { className?: string }) {
 }
 
 function App() {
+  const [view, setView] = useState<View>("bulbs");
   const [bulbs, setBulbs] = useState<Bulb[]>([]);
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [presets, setPresets] = useState<Preset[]>([]);
+  const [themes, setThemes] = useState<AnimatedTheme[]>([]);
   const [discovering, setDiscovering] = useState(false);
   const [applyingPreset, setApplyingPreset] = useState<string | null>(null);
+  const [applyingTheme, setApplyingTheme] = useState<string | null>(null);
+  const [activeTheme, setActiveTheme] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshSignal, setRefreshSignal] = useState(0);
 
@@ -36,6 +42,7 @@ function App() {
     api.listBulbs().then(setBulbs).catch((err: Error) => setError(err.message));
     api.getScenes().then(setScenes).catch((err: Error) => setError(err.message));
     api.getPresets().then(setPresets).catch((err: Error) => setError(err.message));
+    api.getAnimatedThemes().then(setThemes).catch((err: Error) => setError(err.message));
   }, []);
 
   const discover = () => {
@@ -68,6 +75,16 @@ function App() {
     setBulbs((current) => current.filter((b) => b.mac !== mac));
   };
 
+  const applyTheme = (key: string) => {
+    setApplyingTheme(key);
+    setError(null);
+    api
+      .applyAnimatedTheme(key)
+      .then(() => setActiveTheme(key))
+      .catch((err: Error) => setError(err.message))
+      .finally(() => setApplyingTheme(null));
+  };
+
   return (
     <main>
       <header className="app-header">
@@ -83,9 +100,45 @@ function App() {
         </button>
       </header>
 
+      <nav className="view-tabs">
+        <button
+          className={view === "bulbs" ? "active" : ""}
+          onClick={() => setView("bulbs")}
+        >
+          Bulbs
+        </button>
+        <button
+          className={view === "animated" ? "active" : ""}
+          onClick={() => setView("animated")}
+        >
+          Animated
+        </button>
+      </nav>
+
       {error && <p className="app-error">{error}</p>}
 
-      {bulbs.length > 0 && presets.length > 0 && (
+      {view === "animated" && (
+        <section>
+          <p className="animated-hint">
+            Animations run on the bulbs themselves — they keep playing after you close this page.
+          </p>
+          <div className="animated-grid">
+            {themes.map((theme) => (
+              <button
+                key={theme.key}
+                className={`animated-card${activeTheme === theme.key ? " active" : ""}`}
+                disabled={applyingTheme !== null}
+                onClick={() => applyTheme(theme.key)}
+              >
+                <span className="animated-emoji">{theme.emoji}</span>
+                {applyingTheme === theme.key ? "Applying…" : theme.name}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {view === "bulbs" && bulbs.length > 0 && presets.length > 0 && (
         <section>
           <p className="section-label">Presets</p>
           <div className="preset-bar">
@@ -112,7 +165,7 @@ function App() {
         </section>
       )}
 
-      {bulbs.length === 0 && !discovering && (
+      {view === "bulbs" && bulbs.length === 0 && !discovering && (
         <div className="empty-state">
           <BulbIcon className="empty-state-icon" />
           <p>No bulbs yet</p>
@@ -120,18 +173,20 @@ function App() {
         </div>
       )}
 
-      <div className="bulb-grid">
-        {bulbs.map((bulb) => (
-          <BulbCard
-            key={bulb.mac}
-            bulb={bulb}
-            scenes={scenes}
-            onRenamed={handleRenamed}
-            onForgotten={handleForgotten}
-            refreshSignal={refreshSignal}
-          />
-        ))}
-      </div>
+      {view === "bulbs" && (
+        <div className="bulb-grid">
+          {bulbs.map((bulb) => (
+            <BulbCard
+              key={bulb.mac}
+              bulb={bulb}
+              scenes={scenes}
+              onRenamed={handleRenamed}
+              onForgotten={handleForgotten}
+              refreshSignal={refreshSignal}
+            />
+          ))}
+        </div>
+      )}
     </main>
   );
 }
