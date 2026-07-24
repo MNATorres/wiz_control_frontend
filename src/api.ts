@@ -1,4 +1,4 @@
-import type { Bulb, PilotState, Preset, Scene } from "./types";
+import type { AnimatedTheme, Bulb, PilotState, Preset, Scene } from "./types";
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -75,4 +75,12 @@ export async function forgetBulb(mac: string): Promise<void> {
     const body = await res.json().catch(() => ({}));
     throw new Error(body.error ?? `HTTP ${res.status}`);
   }
+}
+
+export function getAnimatedThemes(): Promise<AnimatedTheme[]> {
+  return fetch("/api/animated-themes").then((r) => json<AnimatedTheme[]>(r));
+}
+
+export function applyAnimatedTheme(key: string): Promise<unknown> {
+  return postJson(`/api/animated-themes/${key}/apply`, {});
 }

@@ -35,3 +35,11 @@ export interface Preset {
   name: string;
   colors: PresetColor[];
 }
+
+export interface AnimatedTheme {
+  key: string;
+  name: string;
+  emoji: string;
+  sceneId: number;
+  speed: number;
+}
