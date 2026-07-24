@@ -45,7 +45,7 @@ src/
 ├── App.css
 ├── index.css              # global styles + CSS custom properties (light/dark theme)
 ├── api.ts                # all backend fetch calls live here — components never call fetch directly
-├── types.ts               # shared domain types: Bulb, PilotState, Scene, Preset, PresetColor
+├── types.ts               # shared domain types: Bulb, PilotState, Scene, Preset, AnimatedTheme
 └── components/
     ├── BulbCard.tsx       # single bulb card: on/off, brightness, color/white/scenes tabs
     └── BulbCard.css
