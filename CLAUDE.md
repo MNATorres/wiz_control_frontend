@@ -41,7 +41,7 @@ There is no test script. Use `npm run build` (type-check via `tsc -b`) and
 ```
 src/
 ├── main.tsx              # React entry point (createRoot + StrictMode)
-├── App.tsx               # top-level screen: header, discover button, preset bar, bulb grid
+├── App.tsx               # top-level screen: header, Bulbs/Animated tabs, preset bar, bulb grid
 ├── App.css
 ├── index.css              # global styles + CSS custom properties (light/dark theme)
 ├── api.ts                # all backend fetch calls live here — components never call fetch directly

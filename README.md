@@ -7,6 +7,7 @@ React web app to control WiZ (Philips/Signify) smart bulbs over the local networ
 ## Features
 
 - "Discover bulbs" scans the local network and lists every WiZ bulb found
+- Animated tab: one-click animated themes (Ocean, Fireplace, Party, …) that set a WiZ dynamic scene on every bulb — the animation runs in the bulb firmware, so it keeps playing after closing the page
 - Preset bar: one-click relaxing color combinations (Soft Pastels, Blues, Blue & Red Mix) applied to every bulb at once
 - Per-bulb card: on/off toggle, brightness, RGB color, white color temperature, and scene selection
 - Rename a bulb (persisted by the backend)
