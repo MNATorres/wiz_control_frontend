@@ -23,12 +23,11 @@ export interface Scene {
   name: string;
 }
 
-export interface PresetColor {
-  r: number;
-  g: number;
-  b: number;
-  dimming: number;
-}
+// A preset tone is either an RGB color or a kelvin white (dedicated white LEDs).
+export type PresetColor = { dimming: number } & (
+  | { r: number; g: number; b: number }
+  | { temp: number }
+);
 
 export interface Preset {
   key: string;

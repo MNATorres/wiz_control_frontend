@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import * as api from "./api";
+import { presetColorCss } from "./color";
 import type { AnimatedTheme, Bulb, Preset, Scene } from "./types";
 import { BulbCard } from "./components/BulbCard";
 import "./App.css";
@@ -154,7 +155,7 @@ function App() {
                     <span
                       key={i}
                       className="preset-swatch"
-                      style={{ background: `rgb(${c.r}, ${c.g}, ${c.b})` }}
+                      style={{ background: presetColorCss(c) }}
                     />
                   ))}
                 </span>
